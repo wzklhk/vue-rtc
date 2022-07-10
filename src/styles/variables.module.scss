@@ -1,0 +1,20 @@
+// layout
+$sys-layout-header-height: 60px;
+$sys-layout-main-height: calc(100vh - #{$sys-layout-header-height});
+$sys-layout-aside-width: 300px;
+$sys-layout-aside-height: $sys-layout-main-height;
+
+// color
+$sys-header-color-background: #212121;
+$sys-aside-color-background: black;
+$sys-main-color-background: #f9f9f9;
+$header-text-color: white;
+$menu-color-background: $sys-aside-color-background;
+$menu-color-active-text: gray;
+$menu-color-text: white;
+
+:export {
+  menuColorBackground: $menu-color-background;
+  menuColorActiveText: $menu-color-active-text;
+  menuColorText: $menu-color-text;
+}
