@@ -52,7 +52,7 @@ export default {
         const stream = await this.openCamera(this.device.deviceId, 800, 600);
         let video = document.querySelector("video#localVideo1");
         video.srcObject = stream;
-        video.play();
+        await video.play();
       } catch (e) {
         console.log(e);
       }

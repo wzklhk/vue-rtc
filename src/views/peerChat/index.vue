@@ -17,11 +17,11 @@
     </div>
 
     <div>
-      <el-select v-model="device" placeholder="请选择摄像头">
+      <el-select v-model="selectedDevice" placeholder="请选择摄像头" @select="getConnectedDevicesToData('videoinput')">
         <el-option v-for="device in devices" :key="device.label" :label="device.label" :value="device"></el-option>
       </el-select>
-      <p>device: {{ device ? device.label : "null" }}</p>
-      <p>deviceId: {{ device ? device.deviceId : "null" }}</p>
+      <p>device: {{ selectedDevice ? selectedDevice.label : "null" }}</p>
+      <p>deviceId: {{ selectedDevice ? selectedDevice.deviceId : "null" }}</p>
     </div>
 
     <div>
@@ -39,10 +39,10 @@ export default {
   data() {
     return {
       wsUrl: null,
-      users: {},
+      users: [],
       webSocket: null,
       devices: [],
-      device: null,
+      selectedDevice: null,
       localStream: null,
       remoteStream: null,
       rtcPeerConnection: null,
@@ -53,17 +53,22 @@ export default {
       },
     };
   },
-  created() {
+  async created() {
     this.getUrl();
+    this.connect();
+    await this.getConnectedDevicesToData("videoinput");
+    await this.getConnectedUserList();
   },
   methods: {
     getUrl() {
       this.wsUrl = getWssUrl() + "?username=" + this.userId;
     },
+
     async getConnectedUserList() {
       let res = await getConnectedUserList();
       this.users = res.data;
     },
+
     connect() {
       this.webSocket = new WebSocket(this.wsUrl);
       this.webSocket.onmessage = this.onmessage;
@@ -71,29 +76,104 @@ export default {
       this.webSocket.onerror = this.onerror;
       this.webSocket.onclose = this.onclose;
     },
+
     disconnect() {
       this.webSocket.close();
     },
+
     onopen() {
       console.log("connected");
       this.connectStatus = "connected";
     },
+
     onmessage(data) {
       console.log(data);
+      let message = JSON.parse(data.data);
+      console.log(message);
+      if (message.data.webrtc) {
+        console.log(message.data.webrtc);
+        switch (message.data.webrtc) {
+          case "ready":
+            this.rtcPeerConnection = new RTCPeerConnection(this.iceServers);
+            this.rtcPeerConnection.onicecandidate = this.onIceCandidate;
+            break;
+          case "offer":
+            this.rtcPeerConnection = new RTCPeerConnection(this.iceServers);
+            this.rtcPeerConnection.onicecandidate = this.onIceCandidate;
+            break;
+          default:
+            break;
+        }
+      }
     },
+
     onerror() {
       console.log("error");
     },
+
     onclose() {
       console.log("disconnected");
       this.connectStatus = "disconnected";
     },
+
     sendMessage(Data) {
       this.webSocket.send(Data);
     },
-    inviteWebRTC() {
+
+    inviteWebRTC(user) {
       console.log("inviteWebRTC");
+      if (!user) {
+        console.error("no user set");
+        return;
+      } else {
+        console.log(user);
+      }
+      this.playLocalVideo()
+        .then(() => {
+          console.log("打开本地音视频设备成功");
+          let message = {
+            data: { webrtc: "ready" },
+            receivers: [user],
+          };
+          this.sendMessage(JSON.stringify(message));
+        })
+        .catch(() => {
+          console.log("打开本地音视频设备失败");
+        });
     },
+    /**
+     * Fetch an array of devices of a certain type
+     * @param type
+     * @returns {Promise<MediaDeviceInfo[]>} devices
+     */
+    async getConnectedDevices(type) {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      if (type == null) {
+        return devices;
+      } else {
+        return devices.filter((device) => device.kind === type);
+      }
+    },
+
+    async getConnectedDevicesToData(type) {
+      this.devices = await this.getConnectedDevices(type);
+    },
+
+    async playLocalVideo() {
+      try {
+        if (!this.selectedDevice) {
+          this.$message.warning("请选择设备");
+          return;
+        }
+        const stream = await this.openLocalMedia(this.selectedDevice.deviceId, 800, 600);
+        let video = document.querySelector("video#localVideo");
+        video.srcObject = stream;
+        await video.play();
+      } catch (e) {
+        console.log(e);
+      }
+    },
+
     /**
      * Open camera with at least minWidth and minHeight capabilities
      * @param cameraId
@@ -114,6 +194,34 @@ export default {
       };
       return await navigator.mediaDevices.getUserMedia(constraints);
     },
+
+    onOffer(event) {},
+
+    onAnswer(event) {},
+
+    onCandidate(event) {
+      let candidate = new RTCIceCandidate({
+        sdp: event.sdpMid,
+        sdpMLineIndex: event.sdpMLineIndex,
+        candidate: event.candidate,
+      });
+    },
+
+    onIceCandidate(event, user) {
+      let message = {
+        data: {
+          webrtc: "candidate",
+          candidate: {
+            sdp: event.candidate.sdpMid,
+            sdpMLineIndex: event.candidate.sdpMLineIndex,
+            candidate: event.candidate.candidate,
+          },
+        },
+        receivers: [user],
+      };
+      this.sendMessage(message);
+    },
+
     async init() {
       this.localStream = await navigator.mediaDevices.getUserMedia({
         video: true,
@@ -123,6 +231,7 @@ export default {
 
       await this.createOffer();
     },
+
     async createOffer() {
       this.rtcPeerConnection = new RTCPeerConnection(this.iceServers);
 
