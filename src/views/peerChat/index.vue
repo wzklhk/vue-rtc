@@ -8,24 +8,41 @@
 
     <div class="connect">
       <el-button @click="inviteWebRTC()">开启WebRTC</el-button>
+      <el-button @click="getConnectedUserList()">获取用户列表</el-button>
     </div>
 
     <div id="videos">
       <video id="localVideo" class="video-player" autoplay playsinline></video>
       <video id="remoteVideo" class="video-player" autoplay playsinline></video>
     </div>
+
+    <div>
+      <el-select v-model="device" placeholder="请选择摄像头">
+        <el-option v-for="device in devices" :key="device.label" :label="device.label" :value="device"></el-option>
+      </el-select>
+      <p>device: {{ device ? device.label : "null" }}</p>
+      <p>deviceId: {{ device ? device.deviceId : "null" }}</p>
+    </div>
+
+    <div>
+      <p>用户列表</p>
+      <el-button v-for="user in users" :key="user.username" @click="inviteWebRTC(user)">{{ user.username }}</el-button>
+    </div>
   </div>
 </template>
 
 <script>
-import { getWssUrl } from "@/api/im";
+import { getConnectedUserList, getWssUrl } from "@/api/im";
 
 export default {
   name: "PeerChat",
   data() {
     return {
       wsUrl: null,
+      users: {},
       webSocket: null,
+      devices: [],
+      device: null,
       localStream: null,
       remoteStream: null,
       rtcPeerConnection: null,
@@ -42,6 +59,10 @@ export default {
   methods: {
     getUrl() {
       this.wsUrl = getWssUrl() + "?username=" + this.userId;
+    },
+    async getConnectedUserList() {
+      let res = await getConnectedUserList();
+      this.users = res.data;
     },
     connect() {
       this.webSocket = new WebSocket(this.wsUrl);
@@ -72,6 +93,26 @@ export default {
     },
     inviteWebRTC() {
       console.log("inviteWebRTC");
+    },
+    /**
+     * Open camera with at least minWidth and minHeight capabilities
+     * @param cameraId
+     * @param minWidth
+     * @param minHeight
+     * @returns {Promise<MediaStream>} stream
+     */
+    async openLocalMedia(cameraId, minWidth, minHeight) {
+      const constraints = {
+        audio: {
+          echoCancellation: true,
+        },
+        video: {
+          deviceId: cameraId,
+          width: { min: minWidth },
+          height: { min: minHeight },
+        },
+      };
+      return await navigator.mediaDevices.getUserMedia(constraints);
     },
     async init() {
       this.localStream = await navigator.mediaDevices.getUserMedia({
