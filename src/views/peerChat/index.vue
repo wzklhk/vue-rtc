@@ -192,12 +192,12 @@ export default {
       }
     },
 
-    async playRemoteVideo(event) {
-      console.log("playRemoteVideo");
+    playRemoteVideo(event) {
+      console.log("playRemoteVideo", event);
       this.remoteStream = event.streams[0];
       let remoteVideo = document.querySelector("video#remoteVideo");
       remoteVideo.srcObject = this.remoteStream;
-      await remoteVideo.play();
+      remoteVideo.play();
     },
 
     /**
@@ -254,13 +254,16 @@ export default {
     },
 
     initRTCPeerConnection(user) {
+      console.log("initRTCPeerConnection");
       this.rtcPeerConnection = new RTCPeerConnection(this.iceServers);
 
       this.rtcPeerConnection.onicecandidate = (event) => {
         console.log("onicecandidate", event);
-        this.sendCandidate(event, user);
+        if (event.candidate) {
+          this.sendCandidate(event.candidate, user);
+        }
       };
-      this.rtcPeerConnection.onTrack = (event) => {
+      this.rtcPeerConnection.ontrack = (event) => {
         console.log("onTrack", event);
         this.playRemoteVideo(event);
       };
@@ -301,13 +304,19 @@ export default {
     },
 
     sendCandidate(candidate, user) {
+      console.log("sendCandidate candidate", candidate);
       let message = {
         receivers: [user],
         data: {
           rtcCmd: "candidate",
-          candidate: candidate,
+          candidate: {
+            sdpMid: candidate.sdpMid,
+            sdpMLineIndex: candidate.sdpMLineIndex,
+            candidate: candidate.candidate,
+          },
         },
       };
+      console.log("sendCandidate", message);
       this.sendMessage(JSON.stringify(message));
     },
 
