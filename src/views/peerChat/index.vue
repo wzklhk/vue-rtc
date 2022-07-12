@@ -9,6 +9,7 @@
     <div class="connect">
       <el-button @click="inviteWebRTC()">开启WebRTC</el-button>
       <el-button @click="getConnectedUserList()">获取用户列表</el-button>
+      <el-button @click="playLocalVideo()">开启设备</el-button>
     </div>
 
     <div id="videos">
@@ -192,6 +193,7 @@ export default {
     },
 
     async playRemoteVideo(event) {
+      console.log("playRemoteVideo");
       this.remoteStream = event.streams[0];
       let remoteVideo = document.querySelector("video#remoteVideo");
       remoteVideo.srcObject = this.remoteStream;
@@ -220,6 +222,7 @@ export default {
     },
 
     onReady(message) {
+      this.initRTCPeerConnection(message.sender);
       this.createOffer().then((sessionDescription) => {
         console.log("offer created: ", sessionDescription);
         this.setLocalDescription(sessionDescription);
@@ -229,6 +232,7 @@ export default {
     },
 
     onOffer(message) {
+      this.initRTCPeerConnection(message.sender);
       this.setRemoteDescription(new RTCSessionDescription(message.data.sdp));
       this.createAnswer().then((sessionDescription) => {
         console.log("answer created: ", sessionDescription);
@@ -245,32 +249,21 @@ export default {
     onCandidate(message) {
       let candidate = message.data.candidate;
       console.log("received candidate: ", candidate);
-      let rtcIceCandidate = new RTCIceCandidate({
-        sdpMid: message.data.candidate.sdpMid,
-        sdpMLineIndex: message.data.sdpMLineIndex,
-        candidate: message.data.candidate,
-      });
+      let rtcIceCandidate = new RTCIceCandidate(message.data.candidate);
       this.addIceCandidate(rtcIceCandidate);
     },
 
-    sendCandidate(candidate, user) {
-      let message = {
-        receivers: [user],
-        data: {
-          rtcCmd: "candidate",
-          candidate: candidate,
-        },
-      };
-      this.sendMessage(message);
-    },
-
-    initRTCPeerConnection() {
+    initRTCPeerConnection(user) {
       this.rtcPeerConnection = new RTCPeerConnection(this.iceServers);
 
       this.rtcPeerConnection.onicecandidate = (event) => {
-        console.log(event);
+        console.log("onicecandidate", event);
+        this.sendCandidate(event, user);
       };
-      this.rtcPeerConnection.onTrack = this.playRemoteVideo();
+      this.rtcPeerConnection.onTrack = (event) => {
+        console.log("onTrack", event);
+        this.playRemoteVideo(event);
+      };
 
       this.localStream.getTracks().forEach((track) => {
         this.rtcPeerConnection.addTrack(track, this.localStream);
@@ -282,14 +275,14 @@ export default {
     },
 
     sendOffer(sessionDescription, user) {
-      let data = JSON.stringify({
+      let message = {
         receivers: [user],
         data: {
           rtcCmd: "offer",
           sdp: sessionDescription,
         },
-      });
-      this.sendMessage(data);
+      };
+      this.sendMessage(JSON.stringify(message));
     },
 
     async createAnswer() {
@@ -297,14 +290,25 @@ export default {
     },
 
     sendAnswer(sessionDescription, user) {
-      let data = JSON.stringify({
+      let message = {
         receivers: [user],
         data: {
           rtcCmd: "answer",
           sdp: sessionDescription,
         },
-      });
-      this.sendMessage(data);
+      };
+      this.sendMessage(JSON.stringify(message));
+    },
+
+    sendCandidate(candidate, user) {
+      let message = {
+        receivers: [user],
+        data: {
+          rtcCmd: "candidate",
+          candidate: candidate,
+        },
+      };
+      this.sendMessage(JSON.stringify(message));
     },
 
     setLocalDescription(sessionDescription) {
