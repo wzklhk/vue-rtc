@@ -36,6 +36,7 @@ import { getConnectedUserList, getWssUrl } from "@/api/im";
 
 export default {
   name: "PeerChat",
+
   data() {
     return {
       wsUrl: null,
@@ -51,14 +52,26 @@ export default {
       iceServers: {
         iceServers: [{ url: "stun:stun.services.mozilla.com" }, { url: "stun:stun.l.google.com:19302" }],
       },
+      offerOptions: {
+        iceRestart: true,
+        offerToReceiveAudio: true,
+        offerToReceiveVideo: true,
+      },
     };
   },
+
   async created() {
     this.getUrl();
     this.connect();
     await this.getConnectedDevicesToData("videoinput");
+    if (this.devices.length !== 0) {
+      this.selectedDevice = this.devices[0];
+    } else {
+      alert("无摄像媒体设备");
+    }
     await this.getConnectedUserList();
   },
+
   methods: {
     getUrl() {
       this.wsUrl = getWssUrl() + "?username=" + this.userId;
@@ -87,19 +100,23 @@ export default {
     },
 
     onmessage(data) {
-      console.log(data);
+      console.log("received data: ", data);
       let message = JSON.parse(data.data);
-      console.log(message);
-      if (message.data.webrtc) {
-        console.log(message.data.webrtc);
-        switch (message.data.webrtc) {
+      console.log("received data message: ", message);
+      if (message.data.rtcCmd) {
+        console.log("WebRTC Command: ", message.data.rtcCmd);
+        switch (message.data.rtcCmd) {
           case "ready":
-            this.rtcPeerConnection = new RTCPeerConnection(this.iceServers);
-            this.rtcPeerConnection.onicecandidate = this.onIceCandidate;
+            this.onReady(message);
             break;
           case "offer":
-            this.rtcPeerConnection = new RTCPeerConnection(this.iceServers);
-            this.rtcPeerConnection.onicecandidate = this.onIceCandidate;
+            this.onOffer(message);
+            break;
+          case "answer":
+            this.onAnswer(message);
+            break;
+          case "candidate":
+            this.onCandidate(message);
             break;
           default:
             break;
@@ -132,7 +149,7 @@ export default {
         .then(() => {
           console.log("打开本地音视频设备成功");
           let message = {
-            data: { webrtc: "ready" },
+            data: { rtcCmd: "ready" },
             receivers: [user],
           };
           this.sendMessage(JSON.stringify(message));
@@ -165,13 +182,20 @@ export default {
           this.$message.warning("请选择设备");
           return;
         }
-        const stream = await this.openLocalMedia(this.selectedDevice.deviceId, 800, 600);
-        let video = document.querySelector("video#localVideo");
-        video.srcObject = stream;
-        await video.play();
+        this.localStream = await this.openLocalMedia(this.selectedDevice.deviceId, 800, 600);
+        let localVideo = document.querySelector("video#localVideo");
+        localVideo.srcObject = this.localStream;
+        await localVideo.play();
       } catch (e) {
         console.log(e);
       }
+    },
+
+    async playRemoteVideo(event) {
+      this.remoteStream = event.streams[0];
+      let remoteVideo = document.querySelector("video#remoteVideo");
+      remoteVideo.srcObject = this.remoteStream;
+      await remoteVideo.play();
     },
 
     /**
@@ -195,69 +219,107 @@ export default {
       return await navigator.mediaDevices.getUserMedia(constraints);
     },
 
-    onOffer(event) {},
-
-    onAnswer(event) {},
-
-    onCandidate(event) {
-      let candidate = new RTCIceCandidate({
-        sdp: event.sdpMid,
-        sdpMLineIndex: event.sdpMLineIndex,
-        candidate: event.candidate,
+    onReady(message) {
+      this.createOffer().then((sessionDescription) => {
+        console.log("offer created: ", sessionDescription);
+        this.setLocalDescription(sessionDescription);
+        console.log("offer send to: ", message.sender);
+        this.sendOffer(sessionDescription, message.sender);
       });
     },
 
-    onIceCandidate(event, user) {
+    onOffer(message) {
+      this.setRemoteDescription(new RTCSessionDescription(message.data.sdp));
+      this.createAnswer().then((sessionDescription) => {
+        console.log("answer created: ", sessionDescription);
+        this.setLocalDescription(sessionDescription);
+        console.log("answer send to: ", message.sender);
+        this.sendAnswer(sessionDescription, message.sender);
+      });
+    },
+
+    onAnswer(message) {
+      this.setRemoteDescription(new RTCSessionDescription(message.data.sdp));
+    },
+
+    onCandidate(message) {
+      let candidate = message.data.candidate;
+      console.log("received candidate: ", candidate);
+      let rtcIceCandidate = new RTCIceCandidate({
+        sdpMid: message.data.candidate.sdpMid,
+        sdpMLineIndex: message.data.sdpMLineIndex,
+        candidate: message.data.candidate,
+      });
+      this.addIceCandidate(rtcIceCandidate);
+    },
+
+    sendCandidate(candidate, user) {
       let message = {
-        data: {
-          webrtc: "candidate",
-          candidate: {
-            sdp: event.candidate.sdpMid,
-            sdpMLineIndex: event.candidate.sdpMLineIndex,
-            candidate: event.candidate.candidate,
-          },
-        },
         receivers: [user],
+        data: {
+          rtcCmd: "candidate",
+          candidate: candidate,
+        },
       };
       this.sendMessage(message);
     },
 
-    async init() {
-      this.localStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: false,
-      });
-      document.getElementById("localVideo").srcObject = this.localStream;
-
-      await this.createOffer();
-    },
-
-    async createOffer() {
+    initRTCPeerConnection() {
       this.rtcPeerConnection = new RTCPeerConnection(this.iceServers);
 
-      this.remoteStream = new MediaStream();
-      document.getElementById("remoteVideo").srcObject = this.remoteStream;
+      this.rtcPeerConnection.onicecandidate = (event) => {
+        console.log(event);
+      };
+      this.rtcPeerConnection.onTrack = this.playRemoteVideo();
 
       this.localStream.getTracks().forEach((track) => {
         this.rtcPeerConnection.addTrack(track, this.localStream);
       });
+    },
 
-      this.rtcPeerConnection.ontrack = (event) => {
-        event.streams[0].getTracks().forEach((track) => {
-          this.remoteStream.addtrack(track);
-        });
-      };
+    async createOffer() {
+      return await this.rtcPeerConnection.createOffer(this.offerOptions);
+    },
 
-      this.rtcPeerConnection.onicecandidate = async (event) => {
-        if (event.candidate) {
-          console.log("new ice candidate: ", event.candidate);
-        }
-      };
+    sendOffer(sessionDescription, user) {
+      let data = JSON.stringify({
+        receivers: [user],
+        data: {
+          rtcCmd: "offer",
+          sdp: sessionDescription,
+        },
+      });
+      this.sendMessage(data);
+    },
 
-      let offer = await this.rtcPeerConnection.createOffer();
-      await this.rtcPeerConnection.setLocalDescription(offer);
+    async createAnswer() {
+      return await this.rtcPeerConnection.createAnswer(this.offerOptions);
+    },
 
-      console.log("offer: ", offer);
+    sendAnswer(sessionDescription, user) {
+      let data = JSON.stringify({
+        receivers: [user],
+        data: {
+          rtcCmd: "answer",
+          sdp: sessionDescription,
+        },
+      });
+      this.sendMessage(data);
+    },
+
+    setLocalDescription(sessionDescription) {
+      this.rtcPeerConnection.setLocalDescription(sessionDescription);
+      console.log("setLocalDescription: ", sessionDescription);
+    },
+
+    setRemoteDescription(sessionDescription) {
+      this.rtcPeerConnection.setRemoteDescription(sessionDescription);
+      console.log("setRemoteDescription: ", sessionDescription);
+    },
+
+    addIceCandidate(candidate) {
+      this.rtcPeerConnection.addIceCandidate(candidate);
+      console.log("addIceCandidate: ", candidate);
     },
   },
 };
