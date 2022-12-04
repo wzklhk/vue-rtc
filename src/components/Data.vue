@@ -17,7 +17,7 @@
 
 <script>
 import axios from "axios";
-import { deleteUserById, getUserById, getUserList, saveUser } from "@/api/jpa";
+import { deleteUserById, getUserById, getUserList, saveUser } from "@/api/AccessAdmin";
 
 export default {
   name: "Data",

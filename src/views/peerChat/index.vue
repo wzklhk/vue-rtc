@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { getConnectedUserList, getWssUrl } from "@/api/im";
+import { getConnectedUserList, getWssUrl } from "@/api/ServiceRTC";
 
 export default {
   name: "PeerChat",

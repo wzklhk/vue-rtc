@@ -10,6 +10,6 @@ const CONFIG = {
 };
 
 const MODULES = {
-  jpa: "jpa",
-  im: "im",
+  ACCESS_ADMIN: "access-admin",
+  SERVICE_RTC: "service-rtc",
 };

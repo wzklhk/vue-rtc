@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { getWsUrl } from "@/api/im";
+import { getWsUrl } from "@/api/ServiceRTC";
 
 let socket;
 export default {

@@ -1,12 +1,20 @@
 <template>
   <div>
-    <h1>This is login demo</h1>
+    <h1>login</h1>
   </div>
 </template>
 
 <script>
 export default {
-  name: "index",
+  name: "login",
+  mounted() {
+    this.initQuery();
+  },
+  methods: {
+    initQuery() {
+      let { formPath, token, tokenType, pointToPath } = this.$route.query;
+    },
+  },
 };
 </script>
 

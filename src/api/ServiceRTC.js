@@ -1,6 +1,6 @@
 import request from "@/api/request";
 
-const MODULE_NAME = MODULES.im;
+const MODULE_NAME = MODULES.SERVICE_RTC;
 
 async function getWsUrl() {
   return await request.get(MODULE_NAME + "/ws/getUrl");

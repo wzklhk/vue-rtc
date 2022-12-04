@@ -17,7 +17,7 @@ request.interceptors.request.use(
     config.params = config.params || {};
     config.headers["Content-Type"] = "application/json;charset=utf-8";
 
-    // config.headers['token'] = user.token;  // 设置请求头
+    config.headers.Authorization = sessionStorage.getItem("Authorization");
     return config;
   },
   (error) => {

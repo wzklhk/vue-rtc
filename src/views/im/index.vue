@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { getWssUrl, getWsUrl } from "@/api/im";
+import { getWssUrl, getWsUrl } from "@/api/ServiceRTC";
 
 export default {
   name: "IM",
