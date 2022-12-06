@@ -9,15 +9,15 @@
 
     <el-table :data="tableData" class="data-table">
       <el-table-column label="id" prop="id" />
-      <el-table-column label="name" prop="name" />
-      <el-table-column label="email" prop="email" />
+      <el-table-column label="name" prop="username" />
+      <el-table-column label="email" prop="password" />
     </el-table>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import { deleteUserById, getUserById, getUserList, saveUser } from "@/api/AccessAdmin";
+import { deleteUserById, getUsers, saveUser } from "@/api/AccessAdmin";
 
 export default {
   name: "Data",
@@ -45,9 +45,9 @@ export default {
       });
     },
     async getData1() {
-      let data = await getUserList();
+      let data = await getUsers();
       console.log(data);
-      this.tableData = data.data;
+      this.tableData = data.data.list;
     },
     getData2() {
       this.request.get("https://127.0.0.1:21010/jpa-surface/user/list").then((res) => {
@@ -57,7 +57,7 @@ export default {
       });
     },
     async getDataById() {
-      console.log(await getUserById(1));
+      console.log(await getUsers(1));
     },
     async postData() {
       let data = await saveUser({

@@ -5,7 +5,6 @@ let url = CONFIG.url;
 
 const request = axios.create({
   baseURL: url,
-  // baseURL: "/api",
   timeout: 1000 * 5,
 });
 

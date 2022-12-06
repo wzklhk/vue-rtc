@@ -12,7 +12,8 @@ export default {
   },
   methods: {
     initQuery() {
-      let { formPath, token, tokenType, pointToPath } = this.$route.query;
+      let params = this.$route.query;
+      console.log(params);
     },
   },
 };
