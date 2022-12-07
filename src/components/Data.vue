@@ -1,10 +1,9 @@
 <template>
   <div>
     <el-button @click="getJsonPlaceHolder1">json1</el-button>
-    <el-button @click="getJsonPlaceHolder2">json2</el-button>
-    <el-button @click="getData1">getData1</el-button>
-    <el-button @click="getDataById">getDataByIdLog</el-button>
-    <el-button @click="postData">postData</el-button>
+    <el-button @click="getUsers">getUsers</el-button>
+    <el-button @click="postUsers">postUsers</el-button>
+    <el-button @click="putUsers">putUsers</el-button>
     <el-button @click="deleteData">deleteData</el-button>
 
     <el-table :data="tableData" class="data-table">
@@ -17,12 +16,12 @@
 
 <script>
 import axios from "axios";
-import { deleteUserById, getUsers, saveUser } from "@/api/AccessAdmin";
+import { deleteUser, getUsers, saveUser, updateUser } from "@/api/access/admin/user";
 
 export default {
   name: "Data",
   created() {
-    this.getData1();
+    this.getUsers();
   },
   data() {
     return {
@@ -39,36 +38,62 @@ export default {
         this.tableData = data;
       });
     },
-    getJsonPlaceHolder2() {
-      this.$request.get("http://127.0.0.1:21010/jpa-gosuncn/user/list").then((response) => {
-        console.log(response);
+    async getUsers() {
+      let response = await getUsers();
+      console.log(response);
+
+      if (response.code === ERROR_CODE.OK) {
+        this.$message.success(response.msg);
+        this.tableData = response.data.list;
+      } else if (response.code === ERROR_CODE.ERROR) {
+        this.$message.error(response.msg);
+      } else {
+        this.$message.info(response.msg);
+      }
+    },
+    async postUsers() {
+      let response = await saveUser({
+        username: "user" + parseInt(Math.random() * 10000),
       });
+      console.log(response);
+
+      if (response.code === ERROR_CODE.OK) {
+        this.$message.success(response.msg);
+      } else if (response.code === ERROR_CODE.ERROR) {
+        this.$message.error(response.msg);
+      } else {
+        this.$message.info(response.msg);
+      }
     },
-    async getData1() {
-      let data = await getUsers();
-      console.log(data);
-      this.tableData = data.data.list;
-    },
-    getData2() {
-      this.request.get("https://127.0.0.1:21010/jpa-surface/user/list").then((res) => {
-        let data = res.data;
-        console.log(res);
-        this.tableData = data;
+    async putUsers() {
+      let response = await updateUser({
+        id: 100,
+        username: "user" + parseInt(Math.random() * 10000),
       });
+      console.log(response);
+
+      if (response.code === ERROR_CODE.OK) {
+        this.$message.success(response.msg);
+      } else if (response.code === ERROR_CODE.ERROR) {
+        this.$message.error(response.msg);
+      } else {
+        this.$message.info(response.msg);
+      }
     },
-    async getDataById() {
-      console.log(await getUsers(1));
-    },
-    async postData() {
-      let data = await saveUser({
-        name: "wkh",
-        email: "wkh@wkh.wkh",
-        age: 22,
+    async deleteData() {
+      let response = await deleteUser({
+        id: 29,
       });
-      console.log(data);
-    },
-    deleteData() {
-      console.log(deleteUserById(29));
+      console.log("response");
+      console.log(response);
+
+      if (response.code === ERROR_CODE.OK) {
+        this.$message.success(response.msg);
+      } else if (response.code === ERROR_CODE.ERROR) {
+        this.$message.error(response.msg);
+      } else {
+        this.$message.info(response.msg);
+      }
     },
   },
 };

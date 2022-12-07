@@ -1,0 +1,2 @@
+const MODULE_NAME = MODULES.ACCESS_ADMIN;
+const URL = MODULE_NAME + "/user";

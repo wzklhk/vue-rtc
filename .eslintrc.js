@@ -17,5 +17,6 @@ module.exports = {
   globals: {
     CONFIG: true,
     MODULES: true,
+    ERROR_CODE: true,
   },
 };

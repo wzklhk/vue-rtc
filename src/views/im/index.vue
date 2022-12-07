@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { getWssUrl, getWsUrl } from "@/api/ServiceRTC";
+import { getWssUrl, getWsUrl } from "@/api/service/rtc/ws";
 
 export default {
   name: "IM",
@@ -58,7 +58,7 @@ export default {
       let res = await getWsUrl();
       this.wsUrl = res.data + "?username=" + this.username;
 
-      this.wsUrl = CONFIG.wsUrl + "rtc/ws?username=" + this.username;
+      this.wsUrl = CONFIG.WS_URL + "rtc/ws?username=" + this.username;
     },
     getWssUrl() {
       this.wsUrl = getWssUrl() + this.username;

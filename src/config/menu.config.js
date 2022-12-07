@@ -1,8 +1,8 @@
 const menu = {
   menuItems: [
     {
-      path: "/hello",
-      name: "hello",
+      path: "/home",
+      name: "home",
       meta: {
         title: "hello vue",
         icon: "el-icon-user",
