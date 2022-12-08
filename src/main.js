@@ -6,7 +6,6 @@ import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 import "@/styles/global.scss";
 import "@/styles/colors.scss";
-import "@/utils/request";
 import Fragment from "vue-fragment";
 
 Vue.config.productionTip = false;

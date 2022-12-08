@@ -3,8 +3,12 @@ import { request } from "@/utils/request";
 const MODULE_NAME = MODULES.ACCESS_ADMIN;
 const URL = MODULE_NAME + "/user";
 
-export async function getUsers(params) {
-  return await request.get(URL, params);
+export function getUsers(params) {
+  return request({
+    url: URL,
+    method: "GET",
+    params: params,
+  });
 }
 
 export async function updateUser(params) {

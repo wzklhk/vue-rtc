@@ -1,14 +1,14 @@
 <template>
-  <Data></Data>
+  <table-data></table-data>
 </template>
 
 <script>
-import Data from "@/components/Data.vue";
+import TableData from "@/components/TableData.vue";
 
 export default {
   name: "DataView",
   components: {
-    Data,
+    TableData,
   },
 };
 </script>
