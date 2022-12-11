@@ -114,5 +114,5 @@ module.exports = {
   // 在 HTML、Vue 和 JSX 中每行强制执行单个属性。
   // false- 不要每行强制执行单个属性。
   // true- 每行强制执行单个属性。
-  singleAttributePerLine: false,
+  singleAttributePerLine: true,
 };

@@ -1,83 +1,111 @@
 <template>
-  <div>
-    <el-table ref="multipleTable" :data="data.list" class="data-table" style="width: 100%">
-      <el-table-column type="index" v-if="showIndex" />
-      <el-table-column
-        type="selection"
-        v-if="showSelection"
-        show-overflow-tooltip
-        @selection-change="handleSelectionChange" />
-      <el-table-column
-        v-for="(item, index) in columns"
-        :key="index"
-        :label="item.label"
-        :prop="item.prop"
-        :sortable="item.sortable" />
-    </el-table>
+  <div class="page-table">
+    <common-table
+      :columns="columns"
+      :show-index="showIndex"
+      :show-selection="showSelection"
+      :show-operation="showOperation"
+      :operations="operations"
+      :border="border"
+      :stripe="stripe"
+      :data="data"
+      @selection-change="handleSelectionChange" />
+
     <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="currentSize"
+      :current-page="currentPage"
       :page-sizes="pageSizes"
       :page-size="pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="total">
-    </el-pagination>
+      :total="total"
+      :layout="layout"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange" />
   </div>
 </template>
 
 <script>
+import CommonTable from "@/components/common/CommonTable.vue";
+import CommonPagination from "@/components/common/CommonPagination.vue";
+
 export default {
   name: "PageTable",
+  components: {
+    CommonTable,
+    CommonPagination,
+  },
   props: {
-    // 表设置
+    columns: { type: Array, default: () => [] },
     showIndex: { type: Boolean, default: false },
     showSelection: { type: Boolean, default: false },
-    columns: { type: Array, default: () => [] },
-    data: { type: Object, default: () => {} },
-    // 页设置
-    pageSizes: { type: Array, default: () => [10, 20, 50, 100] },
+    operations: { type: Array },
+    // el-table设置
+    data: { type: Array, default: () => [] },
+    stripe: Boolean,
+    border: Boolean,
+
+    showPagination: { type: Boolean, default: false },
+    // el-pagination设置
+    pageSize: { type: Number, default: 10 },
+    small: Boolean,
+    total: Number,
+    pageCount: Number,
+    pagerCount: {
+      type: Number,
+      validator(value) {
+        return (value | 0) === value && value > 4 && value < 22 && value % 2 === 1;
+      },
+      default: 7,
+    },
+    currentPage: {
+      type: Number,
+      default: 1,
+    },
+    layout: { default: "total, ->, sizes, prev, pager, next, jumper" },
+    pageSizes: {
+      type: Array,
+      default() {
+        return [10, 20, 30, 40, 50, 100];
+      },
+    },
+    popperClass: String,
+    prevText: String,
+    nextText: String,
+    background: Boolean,
+    disabled: Boolean,
+    hideOnSinglePage: Boolean,
+
+    showOperation: { type: Boolean, default: false },
   },
   created() {
-    this.getData();
   },
   data() {
-    return {
-      pageData: [],
-      currentSize: 1,
-      pageSize: 10,
-      total: 0,
-    };
+    return {};
   },
-  computed: {},
   methods: {
-    getData() {
-      console.log(["thisdata", this.data]);
-      this.pageData = this.data.list;
-      this.currentSize = this.data.pageNum;
-      this.pageSize = this.data.pageSize;
-      this.total = this.data.total;
+    handleSizeChange(pageSize) {
+      this.$emit("handle-size-change", pageSize);
     },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+    handleCurrentChange(currentPage) {
+      this.$emit("handle-current-change", currentPage);
     },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+    handleSelectionChange(selections) {
+      this.$emit("handle-selection-change", selections);
     },
-    handleSelectionChange(val) {
-      // this.multipleSelection = val;
+    handleClickGet(index) {
+      console.log(index);
     },
-    toggleSelection(rows) {
-      if (rows) {
-        rows.forEach((row) => {
-          this.$refs.multipleTable.toggleRowSelection(row);
-        });
-      } else {
-        this.$refs.multipleTable.clearSelection();
-      }
+    handleClickUpdate(index) {
+      console.log(index);
+    },
+    handleClickDelete(index) {
+      console.log(index);
     },
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.page-table {
+    width: 100%;
+    height: 100%;
+}
+</style>

@@ -4,11 +4,7 @@ const MODULE_NAME = MODULES.ACCESS_ADMIN;
 const URL = MODULE_NAME + "/user";
 
 export function getUsers(params) {
-  return request({
-    url: URL,
-    method: "GET",
-    params: params,
-  });
+  return request.get(URL, { params: params });
 }
 
 export async function updateUser(params) {
@@ -20,5 +16,5 @@ export async function saveUser(params) {
 }
 
 export async function deleteUser(params) {
-  return await request.delete(URL, params);
+  return await request.delete(URL, { params: params });
 }
