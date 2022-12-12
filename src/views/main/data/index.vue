@@ -4,16 +4,16 @@
       <el-button @click="getAllUserByPage()"> 查询</el-button>
       <el-button
         @click="
-        postRandomUsers();
-        getAllUserByPage();
-      ">
+          postRandomUsers();
+          getAllUserByPage();
+        ">
         新增
       </el-button>
       <el-button
         @click="
-        showOperation = !showOperation;
-        showSelection = !showSelection;
-      ">
+          showOperation = !showOperation;
+          showSelection = !showSelection;
+        ">
         操作
       </el-button>
 
@@ -21,13 +21,13 @@
         v-if="showOperation"
         title="这是一段内容确定删除吗？"
         @confirm="
-        let ids = [];
-        selections.forEach((val) => {
-          ids.push(val.id);
-        });
-        deleteUsersByIdInBatch(ids.toString());
-        getAllUserByPage();
-      ">
+          let ids = [];
+          selections.forEach((val) => {
+            ids.push(val.id);
+          });
+          deleteUsersByIdInBatch(ids.toString());
+          getAllUserByPage();
+        ">
         <el-button
           slot="reference"
           type="danger">

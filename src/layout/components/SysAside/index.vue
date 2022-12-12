@@ -16,7 +16,11 @@
       :default-openeds="defaultOpeneds"
       :unique-opened="uniqueOpened"
       mode="vertical">
-      <sys-aside-item v-for="item in items" :key="item.name" :item="item" :base-path="item.path" />
+      <sys-aside-item
+        v-for="item in items"
+        :key="item.name"
+        :item="item"
+        :base-path="item.path" />
     </el-menu>
   </el-scrollbar>
 </template>

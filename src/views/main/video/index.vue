@@ -1,7 +1,13 @@
 <template>
   <div style="display: flex; flex-direction: column">
-    <el-select v-model="device" placeholder="请选择摄像头">
-      <el-option v-for="device in devices" :key="device.label" :label="device.label" :value="device"></el-option>
+    <el-select
+      v-model="device"
+      placeholder="请选择摄像头">
+      <el-option
+        v-for="device in devices"
+        :key="device.label"
+        :label="device.label"
+        :value="device"></el-option>
     </el-select>
     <!--<select id="devices">
       <option v-for="device in devices" :key="device">
@@ -12,8 +18,14 @@
     <p>deviceId: {{ device ? device.deviceId : "null" }}</p>
 
     <div class="grid">
-      <video id="localVideo1" class="videoAndCanvas" autoplay playsinline></video>
-      <canvas id="localCanvas1" class="videoAndCanvas"></canvas>
+      <video
+        id="localVideo1"
+        class="videoAndCanvas"
+        autoplay
+        playsinline></video>
+      <canvas
+        id="localCanvas1"
+        class="videoAndCanvas"></canvas>
     </div>
 
     <div style="display: flex; flex-direction: row; justify-content: space-between">
@@ -22,9 +34,14 @@
       <el-button @click="stopLocalVideo1()"> 关闭摄像头</el-button>
     </div>
 
-    <video id="localVideo2" class="video" />
+    <video
+      id="localVideo2"
+      class="video" />
 
-    <video id="localVideo3" class="video" controls />
+    <video
+      id="localVideo3"
+      class="video"
+      controls />
   </div>
 </template>
 

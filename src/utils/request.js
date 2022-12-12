@@ -1,6 +1,6 @@
 import axios from "axios";
 import store from "@/store";
-import { getToken, removeToken } from "@/utils/auth";
+import { getTokenFromStorage, removeTokenFromStorage } from "@/utils/auth";
 import router from "@/router";
 import { Message } from "element-ui";
 
@@ -19,7 +19,7 @@ request.interceptors.request.use(
     if (store.getters.token) {
       console.log();
     }
-    config.headers["Authorization"] = getToken();
+    config.headers["Authorization"] = getTokenFromStorage();
     config.params = config.params || {};
 
     return config;
@@ -36,16 +36,14 @@ request.interceptors.response.use(
   (response) => {
     let { status, data } = response || {};
     if (status === 200) {
-      if (data.code === 0) {
-        return data;
-      }
+      return data;
     }
   },
   (error) => {
     console.log("err: " + error); // for debug
     Message.error(error);
     return new Promise((response, reject) => {
-      if (error.status === 401 || error.status === 403) {
+      if (response.status === 401 || response.status === 403) {
         handleTokenExpired();
       }
     });
@@ -53,7 +51,7 @@ request.interceptors.response.use(
 );
 
 function handleTokenExpired() {
-  removeToken();
+  removeTokenFromStorage();
   sessionStorage.clear();
 
   router.push("/login");

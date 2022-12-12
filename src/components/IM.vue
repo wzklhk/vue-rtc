@@ -4,7 +4,9 @@
       <el-header>
         <el-row>
           <el-col :span="20">
-            <el-input v-model="username" placeholder="请输入用户名"></el-input>
+            <el-input
+              v-model="username"
+              placeholder="请输入用户名"></el-input>
           </el-col>
           <el-col :span="4">
             <el-button @click="connect()">
@@ -21,14 +23,19 @@
           <div style="padding-bottom: 10px; border-bottom: 1px solid #ccc">
             在线用户<span style="font-size: 12px">（点击聊天气泡开始聊天）</span>
           </div>
-          <div v-for="user in users" :key="user.username" style="padding: 10px 0">
+          <div
+            v-for="user in users"
+            :key="user.username"
+            style="padding: 10px 0">
             <span>{{ user.username }}</span>
             <i
               class="el-icon-chat-dot-round"
               style="margin-left: 10px; font-size: 16px; cursor: pointer"
               @click="chatUser = user.username"></i>
-            <span v-if="user.username === chatUser" style="font-size: 12px; color: limegreen; margin-left: 5px"
-              >chatting...</span
+            <span
+              v-if="user.username === chatUser"
+              style="font-size: 12px; color: limegreen; margin-left: 5px"
+            >chatting...</span
             >
           </div>
         </el-card>
@@ -38,7 +45,9 @@
         <div
           style="width: 800px; margin: 0 auto; background-color: white; border-radius: 5px; box-shadow: 0 0 10px #ccc">
           <div style="text-align: center; line-height: 50px">Web聊天室（{{ chatUser }}）</div>
-          <div style="height: 350px; overflow: auto; border-top: 1px solid #ccc" v-html="content"></div>
+          <div
+            style="height: 350px; overflow: auto; border-top: 1px solid #ccc"
+            v-html="content"></div>
           <div style="height: 200px">
             <textarea
               v-model="text"
@@ -52,7 +61,13 @@
                 outline: none;
               "></textarea>
             <div style="text-align: right; padding-right: 10px">
-              <el-button size="mini" type="primary" @click="send">发送</el-button>
+              <el-button
+                size="mini"
+                type="primary"
+                @click="send"
+              >发送
+              </el-button
+              >
             </div>
           </div>
         </div>
