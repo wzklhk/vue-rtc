@@ -45,7 +45,7 @@ request.interceptors.response.use(
     console.log("err: " + error); // for debug
     Message.error(error);
     return new Promise((response, reject) => {
-      if (error.response) {
+      if (error.status === 401 || error.status === 403) {
         handleTokenExpired();
       }
     });

@@ -1,26 +1,41 @@
 <template>
   <div>
-    <el-button @click="getAllUserByPage()">查询</el-button>
-    <el-button
-      @click="
+    <div>
+      <el-button @click="getAllUserByPage()"> 查询</el-button>
+      <el-button
+        @click="
         postRandomUsers();
         getAllUserByPage();
       ">
-      新增
-    </el-button>
-    <el-button
-      @click="
+        新增
+      </el-button>
+      <el-button
+        @click="
         showOperation = !showOperation;
         showSelection = !showSelection;
       ">
-      操作
-    </el-button>
-    <el-button
-      v-if="showOperation"
-      @click="deleteBatches()"
-      type="danger">
-      批量删除
-    </el-button>
+        操作
+      </el-button>
+
+      <el-popconfirm
+        v-if="showOperation"
+        title="这是一段内容确定删除吗？"
+        @confirm="
+        let ids = [];
+        selections.forEach((val) => {
+          ids.push(val.id);
+        });
+        deleteUsersByIdInBatch(ids.toString());
+        getAllUserByPage();
+      ">
+        <el-button
+          slot="reference"
+          type="danger">
+          批量删除
+        </el-button>
+      </el-popconfirm>
+    </div>
+
     <page-table
       v-loading="isTableLoading"
       :columns="table.columns"
@@ -41,7 +56,7 @@
 
 <script>
 import PageTable from "@/components/common/PageTable.vue";
-import { deleteUser, getUsers, saveUser, updateUser } from "@/api/access/admin/user";
+import { deleteUserById, deleteUsersByIdInBatch, getUsers, saveUser, updateUser } from "@/api/access/admin/user";
 import { randInt, randStr } from "@/utils/utils";
 
 export default {
@@ -135,7 +150,7 @@ export default {
     handleClickDelete(index) {
       let data = this.pageData.list[index];
       console.log(data);
-      this.deleteUser(data.id);
+      this.deleteUserById(data.id);
       this.getAllUserByPage();
     },
     async getAllUserByPage() {
@@ -187,10 +202,8 @@ export default {
         this.$message.info(response.msg);
       }
     },
-    async deleteUser(id) {
-      let response = await deleteUser({
-        id: id,
-      });
+    async deleteUserById(id) {
+      let response = await deleteUserById(id);
       console.log("response");
       console.log(response);
 
@@ -202,8 +215,15 @@ export default {
         this.$message.info(response.msg);
       }
     },
-    deleteBatches() {
-      console.log("delete batches");
+    async deleteUsersByIdInBatch(ids) {
+      let response = await deleteUsersByIdInBatch(ids);
+      if (response.code === ERROR_CODE.OK) {
+        this.$message.success(response.msg);
+      } else if (response.code === ERROR_CODE.ERROR) {
+        this.$message.error(response.msg);
+      } else {
+        this.$message.info(response.msg);
+      }
     },
   },
 };

@@ -15,6 +15,10 @@ export async function saveUser(params) {
   return await request.post(URL, params);
 }
 
-export async function deleteUser(params) {
-  return await request.delete(URL, { params: params });
+export async function deleteUserById(id) {
+  return await request.delete(URL, { params: { id: id } });
+}
+
+export async function deleteUsersByIdInBatch(ids) {
+  return await request.delete(URL + "/batch", { params: { ids: ids } });
 }
