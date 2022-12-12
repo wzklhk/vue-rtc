@@ -2,8 +2,18 @@
   <div>
     <div class="connect">
       <el-input v-model="wsUrl"></el-input>
-      <el-button v-if="connectStatus === 'disconnected'" @click="connect()">连接</el-button>
-      <el-button v-else @click="disconnect()">断开</el-button>
+      <el-button
+        v-if="connectStatus === 'disconnected'"
+        @click="connect()"
+      >连接
+      </el-button
+      >
+      <el-button
+        v-else
+        @click="disconnect()"
+      >断开
+      </el-button
+      >
     </div>
 
     <div class="connect">
@@ -13,13 +23,28 @@
     </div>
 
     <div id="videos">
-      <video id="localVideo" class="video-player" autoplay playsinline></video>
-      <video id="remoteVideo" class="video-player" autoplay playsinline></video>
+      <video
+        id="localVideo"
+        class="video-player"
+        autoplay
+        playsinline></video>
+      <video
+        id="remoteVideo"
+        class="video-player"
+        autoplay
+        playsinline></video>
     </div>
 
     <div>
-      <el-select v-model="selectedDevice" placeholder="请选择摄像头" @select="getConnectedDevicesToData('videoinput')">
-        <el-option v-for="device in devices" :key="device.label" :label="device.label" :value="device"></el-option>
+      <el-select
+        v-model="selectedDevice"
+        placeholder="请选择摄像头"
+        @select="getConnectedDevicesToData('videoinput')">
+        <el-option
+          v-for="device in devices"
+          :key="device.label"
+          :label="device.label"
+          :value="device"></el-option>
       </el-select>
       <p>device: {{ selectedDevice ? selectedDevice.label : "null" }}</p>
       <p>deviceId: {{ selectedDevice ? selectedDevice.deviceId : "null" }}</p>
@@ -27,7 +52,13 @@
 
     <div>
       <p>用户列表</p>
-      <el-button v-for="user in users" :key="user.username" @click="inviteWebRTC(user)">{{ user.username }}</el-button>
+      <el-button
+        v-for="user in users"
+        :key="user.username"
+        @click="inviteWebRTC(user)"
+      >{{ user.username }}
+      </el-button
+      >
     </div>
   </div>
 </template>

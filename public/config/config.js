@@ -13,12 +13,7 @@ const CONFIG = {
 };
 
 const MODULES = {
-  ACCESS_ADMIN: "access-admin",
+  ACCESS_ADMIN: "admin",
   ACCESS_AUTH: "auth",
   SERVICE_RTC: "service-rtc",
 };
-
-const ERROR_CODE = {
-  OK: 0,
-  ERROR: 1,
-}

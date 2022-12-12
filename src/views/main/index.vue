@@ -1,10 +1,21 @@
 <template>
   <div>
-    <el-header class="black" height="100%">
-      <main-header :drawer-collapse="drawerCollapse" :headerHeight="this.headerHeight" :menu-collapse="menuCollapse" />
+    <el-header
+      class="black"
+      height="100%">
+      <main-header
+        :drawer-collapse="drawerCollapse"
+        :headerHeight="this.headerHeight"
+        :menu-collapse="menuCollapse" />
     </el-header>
-    <el-drawer :direction="'ltr'" :visible.sync="isDrawer" :size="this.menuWidth" title="menu">
-      <main-nav-menu background-color="lightgray" class="mobile-menu" />
+    <el-drawer
+      :direction="'ltr'"
+      :visible.sync="isDrawer"
+      :size="this.menuWidth"
+      title="menu">
+      <main-nav-menu
+        background-color="lightgray"
+        class="mobile-menu" />
     </el-drawer>
     <el-container :style="{ height: `calc(100vh - ${this.headerHeight})` }">
       <el-aside width="auto">

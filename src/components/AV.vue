@@ -1,7 +1,13 @@
 <template>
   <div>
-    <audio class="av" controls src="/static/test.mp3"></audio>
-    <video class="av" controls src="/static/test.mp4"></video>
+    <audio
+      class="av"
+      controls
+      src="/static/test.mp3"></audio>
+    <video
+      class="av"
+      controls
+      src="/static/test.mp4"></video>
   </div>
 </template>
 

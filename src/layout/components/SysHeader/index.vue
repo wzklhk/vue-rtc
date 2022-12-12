@@ -1,9 +1,16 @@
 <template>
   <div class="sys-header">
     <div id="sys-start-panel">
-      <el-button circle class="buttons-color" @click="changeCollapse">
-        <i v-if="collapse" class="el-icon-s-unfold"></i>
-        <i v-else class="el-icon-s-fold"></i>
+      <el-button
+        circle
+        class="buttons-color"
+        @click="changeCollapse">
+        <i
+          v-if="collapse"
+          class="el-icon-s-unfold"></i>
+        <i
+          v-else
+          class="el-icon-s-fold"></i>
       </el-button>
     </div>
 
@@ -13,7 +20,9 @@
 
     <div id="sys-end-panel">
       <el-dropdown>
-        <el-button circle class="buttons-color">
+        <el-button
+          circle
+          class="buttons-color">
           <i class="el-icon-user-solid"></i>
         </el-button>
         <el-dropdown-menu slot="dropdown">

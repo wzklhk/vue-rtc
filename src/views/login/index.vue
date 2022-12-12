@@ -1,39 +1,72 @@
 <template>
   <div>
-    <h1>login</h1>
+    <h1>{{ loginMsg }}</h1>
   </div>
 </template>
 
 <script>
-import { setToken } from "@/utils/auth";
+import { getTokenFromStorage, removeTokenFromStorage, setTokenToStorage } from "@/utils/auth";
 import router from "@/router";
+import { checkToken } from "@/api/access/auth/token";
+import axios from "axios";
 
 export default {
   name: "login",
-  mounted() {
-    this.initQuery();
+  data() {
+    return {
+      loginMsg: "",
+    };
+  },
+  created() {
+    axios.get("/api/auth/oauth/check_token", { params: { token: "asdfasdfa" } }).then((res) => {
+      console.log("res");
+      console.log(res);
+    });
   },
   methods: {
-    initQuery() {
-      let params = this.$route.query;
-      console.log(params);
-      let tokenType = params.tokenType;
-      let realToken = params.token;
-      let token = tokenType + " " + realToken + "";
-      let pointToPath = params.pointToPath;
-      if (tokenType !== undefined || realToken !== undefined) {
-        console.log("token: " + token);
-        setToken(token);
-        sessionStorage.setItem("Authorization", token);
-        if (pointToPath) {
-          console.log("pointToPath: " + pointToPath);
-          router.push(pointToPath);
-        } else {
-          console.log("pointToPath: undefined");
-          router.push("home");
-        }
+    async route() {
+      let token = getTokenFromStorage();
+      console.log(token);
+      let realToken = null;
+      if (token) {
+        realToken = token.replace("Bearer ", "");
       } else {
-        console.log("undefined token");
+        realToken = this.$route.query.token;
+        token = this.$route.query.tokenType + " " + realToken;
+      }
+      this.loginMsg = realToken;
+      if (await this.checkLocalToken(realToken)) {
+        this.loginMsg = "token有效";
+        setTokenToStorage(token);
+        this.pointToPath();
+      } else {
+        this.loginMsg = "没有token";
+      }
+    },
+    async checkLocalToken(token) {
+      let response = await checkToken(token);
+      console.log(response);
+      if (response.code === ERROR_CODE.OK) {
+        this.$message.success(response.msg);
+        return true;
+      } else if (response.code === ERROR_CODE.ERROR) {
+        this.$message.error(response.msg);
+        removeTokenFromStorage();
+        return false;
+      } else {
+        removeTokenFromStorage();
+        return false;
+      }
+    },
+    pointToPath() {
+      const pointToPath = this.$route.query.pointToPath;
+      if (!pointToPath) {
+        console.log("pointToPath: null");
+        return;
+      }
+      if (pointToPath) {
+        console.log("pointToPath: " + pointToPath);
+        router.push(pointToPath);
       }
     },
   },

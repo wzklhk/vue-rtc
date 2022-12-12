@@ -5,7 +5,9 @@
     </el-header>
 
     <el-container class="layout-container">
-      <el-aside class="layout-aside" width="auto">
+      <el-aside
+        class="layout-aside"
+        width="auto">
         <sys-aside />
       </el-aside>
 

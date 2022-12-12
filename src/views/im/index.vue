@@ -1,22 +1,53 @@
 <template>
   <div class="webSocket-container">
     <el-row :gutter="20">
-      <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-        <el-alert type="success" :closable="false"> webSocket连接{{ status }}！</el-alert>
+      <el-col
+        :xs="24"
+        :sm="24"
+        :md="12"
+        :lg="12"
+        :xl="12">
+        <el-alert
+          type="success"
+          :closable="false">
+          webSocket连接{{ status }}！
+        </el-alert>
         <br />
-        <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-form
+          ref="form"
+          :model="form"
+          :rules="rules"
+          label-width="100px">
           <el-form-item label="地址">
             <el-input v-model="wsUrl"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button v-if="this.isConnect" type="primary" @click="disconnect"> 断开</el-button>
-            <el-button v-else type="primary" @click="connect"> 连接</el-button>
+            <el-button
+              v-if="this.isConnect"
+              type="primary"
+              @click="disconnect">
+              断开
+            </el-button
+            >
+            <el-button
+              v-else
+              type="primary"
+              @click="connect">
+              连接
+            </el-button
+            >
           </el-form-item>
-          <el-form-item label="消息" prop="message">
+          <el-form-item
+            label="消息"
+            prop="message">
             <el-input v-model="form.message"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submit">发送消息</el-button>
+            <el-button
+              type="primary"
+              @click="submit"
+            >发送消息
+            </el-button>
           </el-form-item>
           <el-form-item label="返回信息汇总">
             {{ messages }}
@@ -59,6 +90,8 @@ export default {
       this.wsUrl = res.data + "?username=" + this.username;
 
       this.wsUrl = CONFIG.WS_URL + "rtc/ws?username=" + this.username;
+      console.log("this.wsUrl");
+      console.log(this.wsUrl);
     },
     getWssUrl() {
       this.wsUrl = getWssUrl() + this.username;

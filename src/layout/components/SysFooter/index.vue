@@ -1,5 +1,7 @@
 <template>
-  <el-footer class="sys-footer" height="auto">
+  <el-footer
+    class="sys-footer"
+    height="auto">
     <h1>copyright</h1>
   </el-footer>
 </template>

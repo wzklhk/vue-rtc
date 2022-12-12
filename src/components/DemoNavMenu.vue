@@ -1,10 +1,17 @@
 <template>
   <div>
-    <el-radio-group v-model="isCollapse" style="margin-bottom: 20px">
+    <el-radio-group
+      v-model="isCollapse"
+      style="margin-bottom: 20px">
       <el-radio-button :label="false">展开</el-radio-button>
       <el-radio-button :label="true">收起</el-radio-button>
     </el-radio-group>
-    <el-menu :collapse="isCollapse" class="desktop-menu" default-active="1-4-1" @close="handleClose" @open="handleOpen">
+    <el-menu
+      :collapse="isCollapse"
+      class="desktop-menu"
+      default-active="1-4-1"
+      @close="handleClose"
+      @open="handleOpen">
       <el-submenu index="1">
         <template slot="title">
           <i class="el-icon-location"></i>
@@ -27,7 +34,9 @@
         <i class="el-icon-menu"></i>
         <span slot="title">导航二</span>
       </el-menu-item>
-      <el-menu-item disabled index="3">
+      <el-menu-item
+        disabled
+        index="3">
         <i class="el-icon-document"></i>
         <span slot="title">导航三</span>
       </el-menu-item>
