@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h1>{{ loginMsg }}</h1>
+  <div style="white-space: pre-wrap">
+    <p>{{ loginMsg }}</p>
   </div>
 </template>
 
@@ -8,43 +8,42 @@
 import { getTokenFromStorage, removeTokenFromStorage, setTokenToStorage } from "@/utils/auth";
 import router from "@/router";
 import { checkToken } from "@/api/access/auth/token";
-import axios from "axios";
 
 export default {
   name: "login",
   data() {
     return {
-      loginMsg: "",
+      loginMsg: "登录信息：\n",
     };
   },
   created() {
-    axios.get("/api/auth/oauth/check_token", { params: { token: "asdfasdfa" } }).then((res) => {
-      console.log("res");
-      console.log(res);
-    });
-    checkToken("asdfasd").then((res) => {
-      console.log("res");
-      console.log(res);
-    });
+    this.route();
   },
   methods: {
     async route() {
       let token = getTokenFromStorage();
-      console.log(token);
+      this.loginMsg += "Storage Token: \t" + token + "\n";
       let realToken = null;
       if (token) {
         realToken = token.replace("Bearer ", "");
-      } else {
-        realToken = this.$route.query.token;
-        token = this.$route.query.tokenType + " " + realToken;
       }
-      this.loginMsg = realToken;
+      if (this.$route.query.token) {
+        realToken = this.$route.query.token;
+        this.loginMsg += "URL Real Token: \t" + realToken + "\n";
+      }
+      if (this.$route.query.tokenType) {
+        token = this.$route.query.tokenType + " " + realToken;
+      } else {
+        token = "Bearer " + realToken;
+      }
+      this.loginMsg += "Real Token: \t" + realToken + "\n";
       if (await this.checkLocalToken(realToken)) {
-        this.loginMsg = "token有效";
+        this.loginMsg += "token有效" + "\n";
         setTokenToStorage(token);
+        this.loginMsg += "Token: \t" + token + "\n";
         this.pointToPath();
       } else {
-        this.loginMsg = "没有token";
+        this.loginMsg += "没有token" + "\n";
       }
     },
     async checkLocalToken(token) {
@@ -52,9 +51,12 @@ export default {
       console.log(response);
       if (response.code === ERROR_CODE.OK) {
         this.$message.success(response.msg);
+        JSON.stringify(response.data)
+        this.loginMsg = JSON.stringify(response.data) + "\n";
         return true;
       } else if (response.code === ERROR_CODE.ERROR) {
         this.$message.error(response.msg);
+        this.loginMsg = response.data + "\n";
         removeTokenFromStorage();
         return false;
       } else {
