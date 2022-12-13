@@ -71,7 +71,7 @@ const routes = [
         component: () => import("@/views/im/index.vue"),
       },
       {
-        path: "about",
+        path: "/about",
         name: "About",
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route
@@ -79,27 +79,27 @@ const routes = [
         component: () => import(/* webpackChunkName: "about" */ "../views/About.vue"),
       },
       {
-        path: "hello",
+        path: "/home",
         name: "Hello",
         component: () => import("@/components/HelloWorld.vue"),
       },
       {
-        path: "data",
+        path: "/data",
         name: "Data",
         component: () => import("@/views/main/data/index.vue"),
       },
       {
-        path: "video",
+        path: "/video",
         name: "Video",
         component: () => import("@/views/main/video/index.vue"),
       },
       {
-        path: "peerChat",
+        path: "/peerChat",
         name: "peerChat",
         component: () => import("@/views/peerChat/index.vue"),
       },
       {
-        path: "av",
+        path: "/av",
         name: "AV",
         component: () => import("@/views/main/av/index.vue"),
       },

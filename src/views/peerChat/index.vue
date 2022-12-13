@@ -6,14 +6,12 @@
         v-if="connectStatus === 'disconnected'"
         @click="connect()"
       >连接
-      </el-button
-      >
+      </el-button>
       <el-button
         v-else
-        @click="disconnect()"
-      >断开
-      </el-button
-      >
+        @click="disconnect()">
+        断开
+      </el-button>
     </div>
 
     <div class="connect">
@@ -57,8 +55,7 @@
         :key="user.username"
         @click="inviteWebRTC(user)"
       >{{ user.username }}
-      </el-button
-      >
+      </el-button>
     </div>
   </div>
 </template>
