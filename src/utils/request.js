@@ -1,6 +1,6 @@
 import axios from "axios";
 import store from "@/store";
-import { getTokenFromStorage, removeTokenFromStorage } from "@/utils/auth";
+import { getAccessTokenFromStorage, getTokenTypeFromStorage, removeAccessTokenFromStorage } from "@/utils/auth";
 import router from "@/router";
 import { Message } from "element-ui";
 
@@ -19,7 +19,7 @@ request.interceptors.request.use(
     if (store.getters.token) {
       console.log();
     }
-    config.headers["Authorization"] = getTokenFromStorage();
+    config.headers["Authorization"] = getTokenTypeFromStorage() + " " + getAccessTokenFromStorage();
     config.params = config.params || {};
 
     return config;
@@ -53,7 +53,7 @@ request.interceptors.response.use(
 );
 
 function handleTokenExpired() {
-  removeTokenFromStorage();
+  removeAccessTokenFromStorage();
   sessionStorage.clear();
 
   router.push("/login");

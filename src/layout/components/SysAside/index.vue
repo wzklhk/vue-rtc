@@ -35,7 +35,8 @@ export default {
   name: "SysAside",
   components: { SysAsideItem },
 
-  mounted() {},
+  mounted() {
+  },
   computed: {
     ...mapGetters({
       collapse: "collapse",
