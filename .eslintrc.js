@@ -18,5 +18,6 @@ module.exports = {
     CONFIG: true,
     MODULES: true,
     ERROR_CODE: true,
+    SrsRtcPublisherAsync: true,
   },
 };

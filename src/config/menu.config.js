@@ -41,6 +41,14 @@ const menu = {
       },
     },
     {
+      path: "/srs",
+      name: "srs",
+      meta: {
+        title: "srs",
+        icon: "el-icon-video-camera",
+      },
+    },
+    {
       path: "/404",
       name: "404",
       meta: {

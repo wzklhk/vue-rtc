@@ -68,7 +68,7 @@ export default {
       if (this.$route.query.tokenType) {
         setTokenTypeToStorage(this.$route.query.tokenType);
       } else {
-        setTokenTypeToStorage("Bearer ");
+        setTokenTypeToStorage("Bearer");
       }
 
       console.log("Real Token: " + accessToken);
@@ -107,7 +107,7 @@ export default {
         router.push(pointToPath);
       } else {
         console.log("pointToPath: null");
-        // router.push("/home");
+        router.push("/home");
       }
     },
     async login() {

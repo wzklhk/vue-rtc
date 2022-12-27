@@ -103,6 +103,11 @@ const routes = [
         name: "AV",
         component: () => import("@/views/main/av/index.vue"),
       },
+      {
+        path: "/srs",
+        name: "srs",
+        component: () => import("@/views/main/srs/RTC.vue"),
+      },
     ],
   },
   {

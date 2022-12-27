@@ -4,8 +4,8 @@
       <el-input v-model="wsUrl"></el-input>
       <el-button
         v-if="connectStatus === 'disconnected'"
-        @click="connect()"
-      >连接
+        @click="connect()">
+        连接
       </el-button>
       <el-button
         v-else
@@ -25,12 +25,12 @@
         id="localVideo"
         class="video-player"
         autoplay
-        playsinline></video>
+        playsinline />
       <video
         id="remoteVideo"
         class="video-player"
         autoplay
-        playsinline></video>
+        playsinline />
     </div>
 
     <div>
@@ -53,8 +53,8 @@
       <el-button
         v-for="user in users"
         :key="user.username"
-        @click="inviteWebRTC(user)"
-      >{{ user.username }}
+        @click="inviteWebRTC(user)">
+        {{ user.username }}
       </el-button>
     </div>
   </div>
