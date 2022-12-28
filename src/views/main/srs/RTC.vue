@@ -8,7 +8,7 @@
         <el-button @click="publish()">开始推流</el-button>
       </div>
       <video
-        id="localVideo"
+        id="publishVideo"
         class="video-player"
         autoplay
         playsinline />
@@ -21,7 +21,7 @@
         <el-button @click="play()">播放视频</el-button>
       </div>
       <video
-        id="localVideo"
+        id="playVideo"
         class="video-player"
         autoplay
         playsinline />
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { getVersions, play } from "@/api/srs/srs";
+import { getVersions, play, publish } from "@/api/service/rtc/srs";
 
 export default {
   name: "RTC",
@@ -38,22 +38,46 @@ export default {
     return {
       publishUrl: "",
       playUrl: "",
-      sdk: null,
+      publishStream: null,
+      playStream: null,
     };
   },
   methods: {
-    publish() {
-      if (this.sdk) {
-        this.sdk.close();
+    async publish() {
+      // eslint-disable-next-line no-undef
+      const cameras = await getConnectedDevices("videoinput");
+      if (!(cameras && cameras.length > 0)) {
+        return;
       }
-      this.sdk = new SrsRtcPublisherAsync();
+      // Open first available video camera with a resolution of 1280x720 pixels
+      // eslint-disable-next-line no-undef
+      const stream = await openCamera(cameras[0].deviceId, 1280, 720);
+      let videoElement = document.querySelector("video#publishVideo");
+      videoElement.srcObject = stream;
 
-      this.sdk.publish(this.publishUrl).then((session) => {
-        console.log(session);
+      let pc = new RTCPeerConnection(null);
+      stream.getTracks().forEach((track) => {
+        pc.addTrack(track);
       });
+
+      let offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      let response = await publish(this.publishUrl, offer.sdp);
+      await pc.setRemoteDescription(new RTCSessionDescription({ type: "answer", sdp: response.data.sdp }));
     },
     async play() {
-      await play(this.playUrl, "")
+      let stream = new MediaStream();
+      let videoElement = document.querySelector("video#playVideo");
+      videoElement.srcObject = stream;
+      let pc = new RTCPeerConnection(null);
+      stream.getTracks().forEach((track) => {
+        pc.addTrack(track);
+      });
+
+      let offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      let response = await play(this.publishUrl, offer.sdp);
+      await pc.setRemoteDescription(new RTCSessionDescription({ type: "answer", sdp: response.data.sdp }));
     },
     async version() {
       const res = await getVersions();

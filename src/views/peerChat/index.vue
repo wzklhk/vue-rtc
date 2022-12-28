@@ -359,7 +359,7 @@ export default {
     },
 
     addIceCandidate(candidate) {
-      this.rtcPeerConnection.addIceCandidate(candidate);
+      this.rtcPeerConnectionIceCandidate(candidate);
       console.log("addIceCandidate: ", candidate);
     },
   },

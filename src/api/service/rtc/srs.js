@@ -1,10 +1,7 @@
 import { request } from "@/utils/request";
 
-const IP = "localhost";
-const PORT = "1985";
-
-const URL = "http://" + IP + ":" + PORT + "/api/v1";
-const RTC_URL = "http://" + IP + ":" + PORT + "/rtc/v1";
+const MODULE_NAME = MODULES.SERVICE_RTC;
+const URL = MODULE_NAME + "/srs";
 
 export async function getVersions() {
   return await request.get(URL + "/versions");
@@ -35,18 +32,16 @@ export async function getClient(id) {
 }
 
 export async function publish(streamUrl, sdp) {
-  let url = RTC_URL + "/publish";
+  let url = URL + "/publish";
   return await request.post(url, {
-    api: url,
     streamurl: streamUrl,
     sdp: sdp,
   });
 }
 
 export async function play(streamUrl, sdp) {
-  let url = RTC_URL + "/play";
+  let url = URL + "/play";
   return await request.post(url, {
-    api: url,
     streamurl: streamUrl,
     sdp: sdp,
   });
