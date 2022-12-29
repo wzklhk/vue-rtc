@@ -52,6 +52,7 @@ export default {
       // Open first available video camera with a resolution of 1280x720 pixels
       // eslint-disable-next-line no-undef
       const stream = await openCamera(cameras[0].deviceId, 1280, 720);
+
       let videoElement = document.querySelector("video#publishVideo");
       videoElement.srcObject = stream;
 
@@ -66,17 +67,20 @@ export default {
       await pc.setRemoteDescription(new RTCSessionDescription({ type: "answer", sdp: response.data.sdp }));
     },
     async play() {
+      let pc = new RTCPeerConnection(null);
+      pc.addTransceiver("audio", { direction: "recvonly" });
+      pc.addTransceiver("video", { direction: "recvonly" });
       let stream = new MediaStream();
+      pc.ontrack = (event) => {
+        stream.addTrack(event.track);
+      };
+
       let videoElement = document.querySelector("video#playVideo");
       videoElement.srcObject = stream;
-      let pc = new RTCPeerConnection(null);
-      stream.getTracks().forEach((track) => {
-        pc.addTrack(track);
-      });
 
       let offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
-      let response = await play(this.publishUrl, offer.sdp);
+      let response = await play(this.playUrl, offer.sdp);
       await pc.setRemoteDescription(new RTCSessionDescription({ type: "answer", sdp: response.data.sdp }));
     },
     async version() {
