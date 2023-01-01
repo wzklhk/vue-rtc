@@ -39,10 +39,28 @@ export async function publish(streamUrl, sdp) {
   });
 }
 
+export async function publishByRoomAndDisplay(room, display, sdp) {
+  let url = URL + "/publish";
+  return await request.post(url, {
+    room: room,
+    display: display,
+    sdp: sdp,
+  });
+}
+
 export async function play(streamUrl, sdp) {
   let url = URL + "/play";
   return await request.post(url, {
     streamurl: streamUrl,
+    sdp: sdp,
+  });
+}
+
+export async function playByRoomAndDisplay(room, display, sdp) {
+  let url = URL + "/play";
+  return await request.post(url, {
+    room: room,
+    display: display,
     sdp: sdp,
   });
 }

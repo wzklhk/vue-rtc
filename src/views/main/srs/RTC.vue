@@ -4,20 +4,23 @@
     <div>
       <h1>RTC推流</h1>
       <div style="display: flex">
-        <el-input v-model="publishUrl"></el-input>
+        <el-input v-model="publishRoom"></el-input>
+        <el-input v-model="publishDisplay"></el-input>
         <el-button @click="publish()">开始推流</el-button>
       </div>
       <video
         id="publishVideo"
         class="video-player"
         autoplay
-        playsinline />
+        playsinline
+        muted />
     </div>
 
     <div>
       <h1>RTC播放</h1>
       <div style="display: flex">
-        <el-input v-model="playUrl"></el-input>
+        <el-input v-model="playRoom"></el-input>
+        <el-input v-model="playDisplay"></el-input>
         <el-button @click="play()">播放视频</el-button>
       </div>
       <video
@@ -30,13 +33,16 @@
 </template>
 
 <script>
-import { getVersions, play, publish } from "@/api/service/rtc/srs";
+import { getVersions, playByRoomAndDisplay, publishByRoomAndDisplay } from "@/api/service/rtc/srs";
 
 export default {
   name: "RTC",
   data() {
     return {
-      publishUrl: "",
+      publishRoom: "live",
+      publishDisplay: "livestream",
+      playRoom: "live",
+      playDisplay: "livestream",
       playUrl: "",
       publishStream: null,
       playStream: null,
@@ -51,7 +57,7 @@ export default {
       }
       // Open first available video camera with a resolution of 1280x720 pixels
       // eslint-disable-next-line no-undef
-      const stream = await openCamera(cameras[0].deviceId, 1280, 720);
+      const stream = await openCamera(cameras[0].deviceId, 1920, 1080);
 
       let videoElement = document.querySelector("video#publishVideo");
       videoElement.srcObject = stream;
@@ -63,7 +69,7 @@ export default {
 
       let offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
-      let response = await publish(this.publishUrl, offer.sdp);
+      let response = await publishByRoomAndDisplay(this.publishRoom, this.publishDisplay, offer.sdp);
       await pc.setRemoteDescription(new RTCSessionDescription({ type: "answer", sdp: response.data.sdp }));
     },
     async play() {
@@ -80,7 +86,7 @@ export default {
 
       let offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
-      let response = await play(this.playUrl, offer.sdp);
+      let response = await playByRoomAndDisplay(this.playRoom, this.playDisplay, offer.sdp);
       await pc.setRemoteDescription(new RTCSessionDescription({ type: "answer", sdp: response.data.sdp }));
     },
     async version() {
