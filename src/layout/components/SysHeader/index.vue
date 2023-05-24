@@ -15,15 +15,20 @@
     </div>
 
     <div id="sys-center-panel">
-      <h1>title</h1>
+      <h1>智慧执法系统</h1>
     </div>
 
     <div id="sys-end-panel">
-      <el-dropdown>
-        <el-button
+      <el-button
           circle
           class="buttons-color">
-          <i class="el-icon-user-solid"></i>
+        <i class="el-icon-bell"></i>
+      </el-button>
+      <el-dropdown>
+        <el-button
+            circle
+            class="buttons-color">
+          <i class="el-icon-user"></i>
         </el-button>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item>黄金糕</el-dropdown-item>
@@ -38,7 +43,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import {mapActions, mapGetters} from "vuex";
 
 export default {
   name: "SysHeader",

@@ -1,18 +1,18 @@
 <template>
-  <div class="login-bg black">
+  <div class="login-bg white">
     <div class="login">
       <el-form
-        :model="user"
-        ref="userForm">
+          :model="user"
+          ref="userForm">
         <el-form-item>
           <h1>请登录</h1>
         </el-form-item>
 
         <el-form-item>
           <el-input
-            placeholder="请输入用户名"
-            prefix-icon="el-icon-user"
-            v-model="user.username">
+              placeholder="请输入用户名"
+              prefix-icon="el-icon-user"
+              v-model="user.username">
           </el-input>
         </el-form-item>
 
@@ -27,7 +27,7 @@
 
         <el-form-item>
           <el-button @click="login">登录</el-button>
-          <el-button @click="login">注册</el-button>
+          <el-button @click="login" v-if="false">注册</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -43,7 +43,7 @@ import {
   setTokenTypeToStorage,
 } from "@/utils/auth";
 import router from "@/router";
-import { checkToken, getToken } from "@/api/access/auth/token";
+import {checkToken, getToken} from "@/api/access/auth/token";
 
 export default {
   name: "login",
@@ -51,11 +51,16 @@ export default {
     return {
       user: {},
       loginMsg: "登录信息：\n",
+      ws: null,
+      wsStatus: "",
+      isWsConnected: false,
     };
   },
+
   created() {
     this.route();
   },
+
   methods: {
     async route() {
       let accessToken = getAccessTokenFromStorage();
@@ -76,6 +81,7 @@ export default {
         console.log("token有效");
         setAccessTokenToStorage(accessToken);
         this.loginMsg += "Token: \t" + accessToken + "\n";
+        this.connectWs(CONFIG.WS_URL + MODULES.SERVICE_RTC + "/ws?token=" + getAccessTokenFromStorage())
         this.pointToPath();
       } else {
         this.loginMsg += "没有token" + "\n";
@@ -90,7 +96,7 @@ export default {
         this.loginMsg = JSON.stringify(response.data) + "\n";
         return true;
       } else if (response.code === ERROR_CODE.ERROR) {
-        this.$message.error(response.msg);
+        this.$message.error("用户名或密码错误");
         this.loginMsg = response.data + "\n";
         removeAccessTokenFromStorage();
         return false;
@@ -99,6 +105,7 @@ export default {
         return false;
       }
     },
+
     pointToPath() {
       const pointToPath = this.$route.query.pointToPath;
 
@@ -110,6 +117,7 @@ export default {
         router.push("/home");
       }
     },
+
     async login() {
       let response = await getToken(this.user.username, this.user.password);
       if (response.code === ERROR_CODE.OK) {
@@ -125,6 +133,40 @@ export default {
         this.$message.error(response.data);
       }
     },
+
+    connectWs(wsUrl) {
+      this.ws = new WebSocket(wsUrl);
+      this.ws.onmessage = this.onmessage;
+      this.ws.onopen = this.onopen;
+      this.ws.onerror = this.onerror;
+      this.ws.onclose = this.onclose;
+      this.isWsConnected = true
+    },
+
+    disconnectWs() {
+      this.ws.close();
+      this.isWsConnected = false;
+    },
+
+    onopen() {
+      this.wsStatus = "成功";
+    },
+
+    onerror() {
+      this.wsStatus = "失败";
+    },
+
+    onmessage(data) {
+      console.log(data);
+    },
+
+    send(Data) {
+      this.ws.send(Data);
+    },
+
+    onclose() {
+      this.wsStatus = "断开";
+    },
   },
 };
 </script>
@@ -136,7 +178,6 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-
 }
 
 .login {

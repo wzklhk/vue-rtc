@@ -1,7 +1,7 @@
 import { request } from "@/utils/request";
 
-const MODULE_NAME = MODULES.ACCESS_ADMIN;
-const URL = MODULE_NAME + "/user";
+const MODULE_NAME = MODULES.SERVICE_MESSAGE;
+const URL = MODULE_NAME + "/room";
 
 export function get(params) {
   return request.get(URL, { params: params });

@@ -4,187 +4,90 @@ const menu = {
       path: "/home",
       name: "home",
       meta: {
-        title: "hello vue",
+        title: "首页",
+        icon: "el-icon-house",
+      },
+    },
+    {
+      path: "/admin",
+      name: "access",
+      meta: {
+        title: "访问管理",
         icon: "el-icon-user",
-      },
-    },
-    {
-      path: "/data",
-      name: "data",
-      meta: {
-        title: "table data",
-        icon: "el-icon-s-data",
-      },
-    },
-    {
-      path: "/av",
-      name: "av",
-      meta: {
-        title: "audio and video",
-        icon: "el-icon-video-play",
-      },
-    },
-    {
-      path: "/video",
-      name: "video",
-      meta: {
-        title: "video stream",
-        icon: "el-icon-video-camera",
-      },
-    },
-    {
-      path: "/peerChat",
-      name: "peerChat",
-      meta: {
-        title: "peer chat",
-        icon: "el-icon-video-camera",
-      },
-    },
-    {
-      path: "/srs",
-      name: "srs",
-      meta: {
-        title: "srs",
-        icon: "el-icon-video-camera",
-      },
-    },
-    {
-      path: "/404",
-      name: "404",
-      meta: {
-        title: "not found",
-        icon: "el-icon-close",
-      },
-    },
-    {
-      path: "/403",
-      name: "403",
-      meta: {
-        title: "forbidden",
-        icon: "el-icon-close",
-      },
-    },
-    {
-      path: "/layout",
-      name: "layout1",
-      meta: {
-        title: "--layout1",
-        icon: "el-icon-s-home",
-      },
-    },
-    {
-      path: "/layout",
-      name: "layout2",
-      meta: {
-        title: "--layout2",
-        icon: "el-icon-more",
       },
       children: [
         {
-          path: "av",
-          name: "av",
+          path: "user",
+          name: "user",
           meta: {
-            title: "--av",
+            title: "用户管理",
           },
         },
         {
-          path: "data",
-          name: "data",
+          path: "role",
+          name: "role",
           meta: {
-            title: "--data",
+            title: "角色管理",
           },
         },
         {
-          path: "video",
-          name: "video",
+          path: "channel",
+          name: "channel",
           meta: {
-            title: "--video",
+            title: "频道管理",
+          },
+        },
+        {
+          path: "room",
+          name: "room",
+          meta: {
+            title: "房间管理",
           },
         },
       ],
     },
     {
-      path: "/main",
-      name: "layout3",
+      path: "/realplay",
+      name: "realplay",
       meta: {
-        title: "--layout3",
-        icon: "el-icon-more",
+        title: "实时视频",
+        icon: "el-icon-video-camera",
       },
       children: [
         {
-          path: "hello",
-          name: "hello",
+          path: "publish",
+          name: "publish",
           meta: {
-            title: "hello vue",
-            icon: "el-icon-user",
-          },
-        },
-        {
-          path: "data",
-          name: "data",
-          meta: {
-            title: "table data",
-            icon: "el-icon-s-data",
-          },
-        },
-        {
-          path: "av",
-          name: "av",
-          meta: {
-            title: "audio and video",
-            icon: "el-icon-video-play",
-          },
-        },
-        {
-          path: "video",
-          name: "video",
-          meta: {
-            title: "video stream",
+            title: "实时视频推流",
             icon: "el-icon-video-camera",
           },
         },
         {
-          path: "hello2",
-          name: "hello2",
+          path: "channelList",
+          name: "channelList",
           meta: {
-            title: "--hello",
+            title: "频道列表",
+            icon: "el-icon-video-play",
           },
-          children: [
-            {
-              path: "hello3",
-              name: "hello3",
-              meta: {
-                title: "--hello",
-              },
-              children: [
-                {
-                  path: "hello4",
-                  name: "hello4",
-                  meta: {
-                    title: "--hello",
-                  },
-                },
-              ],
-            },
-          ],
         },
       ],
     },
     {
-      path: "/im",
-      name: "im",
+      path: "/replay",
+      name: "replay",
       meta: {
-        title: "websocket",
-        icon: "el-icon-phone",
+        title: "录像回放",
+        icon: "el-icon-video-play",
       },
     },
     {
-      path: "https://www.baidu.com",
-      name: "baidu",
+      path: "/room",
+      name: "room",
       meta: {
-        title: "baidu",
-        icon: "el-icon-platform-eleme",
+        title: "语音对讲",
+        icon: "el-icon-phone-outline",
       },
+      hasChildren: false,
     },
   ],
 };

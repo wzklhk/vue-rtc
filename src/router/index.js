@@ -1,6 +1,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Layout from "@/layout/index";
+import About from "@/views/About.vue";
+import Route from "@/views/Route.vue";
 
 Vue.use(VueRouter);
 
@@ -9,13 +11,18 @@ const routes = [
     path: "/",
     name: "HomeLayout",
     component: Layout,
-    redirect: "/login",
+    redirect: "login",
     children: [
       {
-        path: "/layout",
+        path: "layout",
         name: "layout",
         component: () => import("@/layout/index.vue"),
         children: [
+          {
+            path: "hello",
+            name: "Hello2",
+            component: () => import("@/components/HelloWorld.vue"),
+          },
           {
             path: "hello",
             name: "Hello2",
@@ -104,16 +111,80 @@ const routes = [
         component: () => import("@/views/main/av/index.vue"),
       },
       {
-        path: "/srs",
-        name: "srs",
-        component: () => import("@/views/main/srs/RTC.vue"),
+        path: "admin",
+        name: "admin",
+        component: Route,
+        children: [
+          {
+            path: "user",
+            name: "AdminUser",
+            component: () => import("@/views/admin/user/index.vue"),
+          },
+          {
+            path: "role",
+            name: "AdminRole",
+            component: () => import("@/views/admin/role/index.vue"),
+          },
+          {
+            path: "channel",
+            name: "AdminChannel",
+            component: () => import("@/views/admin/channel/index.vue"),
+          },
+          {
+            path: "room",
+            name: "AdminRoom",
+            component: () => import("@/views/admin/room/index.vue"),
+          },
+        ],
+      },
+      {
+        path: "realplay",
+        name: "realplay",
+        component: Route,
+        children: [
+          {
+            path: "channelList",
+            name: "channelList",
+            component: () => import("@/views/channel/index.vue"),
+          },
+          {
+            path: "publish",
+            name: "publish",
+            component: () => import("@/components/RtcPublisher.vue"),
+          },
+        ],
+      },
+      {
+        path: "replay",
+        name: "replay",
+        component: () => import("@/views/replay/channel/index.vue"),
       },
     ],
+  },
+  {
+    path: "/room",
+    name: "Room",
+    component: () => import("@/views/room/room/index.vue"),
+  },
+  {
+    path: "/player",
+    name: "player",
+    component: () => import("@/components/Player.vue"),
   },
   {
     path: "/login",
     name: "Login",
     component: () => import("@/views/login/index.vue"),
+  },
+  {
+    path: "/rtcPublisher",
+    name: "srs",
+    component: () => import("@/components/RtcPublisher.vue"),
+  },
+  {
+    path: "/rtcPlayer",
+    name: "srs",
+    component: () => import("@/components/RtcPlayer.vue"),
   },
   {
     path: "/404",
@@ -124,11 +195,6 @@ const routes = [
     path: "/403",
     name: "403",
     component: () => import("@/views/403.vue"),
-  },
-  {
-    path: "*",
-    redirect: "/404",
-    hidden: true,
   },
 ];
 

@@ -13,6 +13,16 @@ $menu-color-background: $sys-aside-color-background;
 $menu-color-active-text: gray;
 $menu-color-text: white;
 
+$room-header-color-background: #1a1a1a;
+$room-header-color-border: black;
+$room-header-text-color: white;
+$room-main-color-background: $room-header-color-background;
+$room-main-color-border: $room-header-color-border;
+$room-members-color-background: #262625;
+$room-members-color-border: $room-header-color-border;
+$room-messages-color-background: $room-members-color-background;
+$room-messages-color-border: $room-header-color-border;
+
 :export {
   menuColorBackground: $menu-color-background;
   menuColorActiveText: $menu-color-active-text;

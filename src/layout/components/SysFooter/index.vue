@@ -2,7 +2,7 @@
   <el-footer
     class="sys-footer"
     height="auto">
-    <h1>copyright</h1>
+    <p>智慧执法系统</p>
   </el-footer>
 </template>
 

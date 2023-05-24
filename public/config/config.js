@@ -5,15 +5,16 @@ let ip = "127.0.0.1";
 let port = 23333;
 
 const CONFIG = {
-  // URL: "https://" + ip + ":" + port + "/",  // 指定后端url
-  // URL: "/",  // 使用网关url作为后端url，生产环境，不加api反向代理转发
-  URL: "/api",  // 使用网关url作为后端url，开发环境，加api反向代理转发
+    // URL: "https://" + ip + ":" + port + "/",  // 指定后端url
+    // URL: "/",  // 使用网关url作为后端url，生产环境，不加api反向代理转发
+    URL: "/api",  // 使用网关url作为后端url，开发环境，加api反向代理转发
 
-  WS_URL: "wss://" + ip + ":" + port + "/",
+    WS_URL: "ws://" + ip + ":" + port + "/",
 };
 
 const MODULES = {
-  ACCESS_ADMIN: "admin",
-  ACCESS_AUTH: "auth",
-  SERVICE_RTC: "service-rtc",
+    ACCESS_ADMIN: "admin",
+    ACCESS_AUTH: "auth",
+    SERVICE_MESSAGE: "service-message",
+    SERVICE_RTC: "service-rtc",
 };
